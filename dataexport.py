@@ -76,9 +76,15 @@ def save_lidar_data(filename, point_cloud, format="bin"):
     logging.info("Wrote lidar data to %s", filename)
     
     if format == "bin":
-        lidar_array = [[point[0], -point[1], point[2], point[3]]
-                       for point in point_cloud]
-        lidar_array = np.array(lidar_array).astype(np.float32)
+                
+        #lidar_array = [[point[0], -point[1], point[2], point[3]]
+                       #for point in point_cloud]
+       
+        ANS = point_cloud.tolist()
+        #lidar_array = np.array(lidar_array).astype(np.float32)
+        #import pdb;pdb.set_trace()
+        lidar_array = np.array(ANS).astype(np.float32)
+        lidar_array[:, 1] = -lidar_array[:, 1] 
         logging.debug("Lidar min/max of x: {} {}".format(
                       lidar_array[:, 0].min(), lidar_array[:, 0].max()))
         logging.debug("Lidar min/max of y: {} {}".format(
