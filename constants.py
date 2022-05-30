@@ -49,7 +49,7 @@ points_per_second = 5120000
 channels = 64
 
 
-NUM_OF_WALKERS = 16
+NUM_OF_WALKERS = 30
 FILTERW = 'walker.pedestrian.*'
 FILTERV = 'vehicle.*'
-NUM_OF_VEHICLES = 2
+NUM_OF_VEHICLES = 5

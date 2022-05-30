@@ -206,7 +206,7 @@ class SynchronyModel(object):
 
         self.player_vehicle = my_vehicle
 
-        
+
         self.player_sensor1 = my_camera2
         self.player_sensor2 = my_camera3
 
@@ -597,7 +597,7 @@ def main():
                 
              
                
-                if (datapoints_vehicle or datapoints_sensor1 or datapoints_sensor2) and step % 33 == 0:
+                if (datapoints_vehicle or datapoints_sensor1 or datapoints_sensor2) and step % 67 == 0:
                     points_vehicle = np.copy(np.frombuffer(sync_mode.point_cloud_vehicle.raw_data, dtype=np.dtype('f4')))
                     points_vehicle = np.reshape(points_vehicle, (int(points_vehicle.shape[0] / 4), 4))
                     # Isolate the 3D data

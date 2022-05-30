@@ -228,10 +228,14 @@ def transforms_from_agent(agent):
         ext = agent.bounding_box.extent
         location = agent.get_transform().location
     elif agent.type_id.find('vehicle') != -1:
-        obj_type = 'Car'
+        
         agent_transform = agent.get_transform()
         bbox_transform = carla.Transform(agent.bounding_box.location, agent.bounding_box.rotation)
         ext = agent.bounding_box.extent
+        if 2*bbox_extent.z > 2:
+            obj_type = 'Truck'
+        else:
+            obj_type = 'Car'
         location = agent.get_transform().location
     else:
         return (None, None, None, None, None)

@@ -432,7 +432,7 @@ def show_lidar_with_boxes(pc_velo, objects, calib, data_idx):
         box3d_pts_3d_velo = calib.project_rect_to_velo(box3d_pts_3d)
         
         create_bbox_mesh(p3d, box3d_pts_3d_velo)
-        print(box3d_pts_3d_velo)
+        #print(box3d_pts_3d_velo)
         # Draw heading arrow
         ori3d_pts_2d, ori3d_pts_3d = compute_orientation_3d(obj, calib.P)
         ori3d_pts_3d_velo = calib.project_rect_to_velo(ori3d_pts_3d)
@@ -561,7 +561,7 @@ def get_label_objects_detection(detection_dir, idx):
 if __name__ == '__main__': 
     dataset = kitti_object('/opt/carla-simulator/Kitti_test-main/T_junction_pedestrians/vehicle/training/')
    
-    data_idx = 0
+    data_idx = 33
     # PC
     lidar_data = dataset.get_lidar(data_idx)
     #lidar_data = dataset.get_lidar_reduced(data_idx)
