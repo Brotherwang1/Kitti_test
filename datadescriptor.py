@@ -111,7 +111,7 @@ class KittiDescriptor:
             # Since the midpoint/location of the pedestrian is in the middle of the agent, while for car it is at the bottom
             # we need to subtract the bbox extent in the height direction when adding location of pedestrian.
             #y -= self.extent[0]
-            z -= 2*self.extent[1]
+            z -= self.extent[0]
 
         # Convert from Carla coordinate system to KITTI
         # This works for AVOD (image)
