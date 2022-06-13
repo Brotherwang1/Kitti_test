@@ -75,7 +75,13 @@ class KittiDescriptor:
         height, width, length = bbox_extent.z, bbox_extent.x, bbox_extent.y
         # Since Carla gives us bbox extent, which is a half-box, multiply all by two
         self.extent = (height, width, length)
+      
         self.dimensions = "{} {} {}".format(2*height, 2*width, 2*length)
+        if self.dimensions[1] < 0.5:
+            self.dimensions[1] < 0.6
+         if self.dimensions[2] < 0.5:
+            self.dimensions[2] = 0.6
+
 
     def set_3d_object_location(self, obj_location):
         """ TODO: Change this to 

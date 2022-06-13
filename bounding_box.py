@@ -124,8 +124,8 @@ def create_kitti_datapoint(agent, intrinsic_mat, extrinsic_mat, image, depth_ima
         occluded = 2
     datapoint = KittiDescriptor()
     datapoint.set_bbox(bbox_2d)
-    datapoint.set_3d_object_dimensions(ext)
     datapoint.set_type(obj_type)
+    datapoint.set_3d_object_dimensions(ext)
     datapoint.set_3d_object_location(midpoint)
     datapoint.set_rotation_y(rotation_y)
     datapoint.set_occlusion(occluded)
@@ -232,7 +232,7 @@ def transforms_from_agent(agent):
         agent_transform = agent.get_transform()
         bbox_transform = carla.Transform(agent.bounding_box.location, agent.bounding_box.rotation)
         ext = agent.bounding_box.extent
-        if 2*bbox_extent.z > 2:
+        if 2*ext.z > 2:
             obj_type = 'Truck'
         else:
             obj_type = 'Car'

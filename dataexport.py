@@ -76,7 +76,7 @@ def save_lidar_data(filename, point_cloud, format="bin"):
     logging.info("Wrote lidar data to %s", filename)
     
     if format == "bin":
-                
+        
         #lidar_array = [[point[0], -point[1], point[2], point[3]]
                        #for point in point_cloud]
        

@@ -458,7 +458,7 @@ def show_lidar_with_boxes(pc_velo, objects, calib, data_idx):
 
    
    
-    ''' 
+
     p3d.add_line_boundary(vertex1, vertex2, color = (1, 1, 0, 1))
     p3d.add_line_boundary(vertex2, vertex3, color = (1, 1, 0, 1))
     p3d.add_line_boundary(vertex3, vertex4, color = (1, 1, 0, 1))
@@ -474,7 +474,7 @@ def show_lidar_with_boxes(pc_velo, objects, calib, data_idx):
     p3d.add_line_boundary(vertex2_1, vertex2)
     p3d.add_line_boundary(vertex3_1, vertex3)
     p3d.add_line_boundary(vertex4_1, vertex4)
-    '''
+ 
     p3d.show()
 
 
@@ -559,9 +559,8 @@ def get_label_objects_detection(detection_dir, idx):
 
 
 if __name__ == '__main__': 
-    dataset = kitti_object('/opt/carla-simulator/Kitti_test-main/T_junction_pedestrians/vehicle/training/')
-   
-    data_idx = 33
+    dataset = kitti_object('/opt/carla-simulator/Kitti_test-main/Roundabout_pedestrians_V2/vehicle/training/')   
+    data_idx = 1
     # PC
     lidar_data = dataset.get_lidar(data_idx)
     #lidar_data = dataset.get_lidar_reduced(data_idx)

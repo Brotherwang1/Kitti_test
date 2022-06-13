@@ -28,8 +28,8 @@ NUM_VEHICLES = 20
 NUM_PEDESTRIANS = 10
 
 """ RENDERING SETTINGS """
-WINDOW_WIDTH = 1248
-WINDOW_HEIGHT = 384
+WINDOW_WIDTH = 1242
+WINDOW_HEIGHT = 375
 
 MINI_WINDOW_WIDTH = 320
 MINI_WINDOW_HEIGHT = 180
@@ -44,12 +44,12 @@ MIN_VISIBLE_VERTICES_FOR_RENDER = 4
 lidar_range = 80
 lidar_rotation_frequency = 20
 lidar_upper_fov = 2
-lidar_lower_fov = -30
+lidar_lower_fov = -28.6
 points_per_second = 5120000
 channels = 64
 
 
-NUM_OF_WALKERS = 30
+NUM_OF_WALKERS = 60
 FILTERW = 'walker.pedestrian.*'
 FILTERV = 'vehicle.*'
-NUM_OF_VEHICLES = 5
+NUM_OF_VEHICLES = 3

@@ -27,7 +27,7 @@ from dataexport import *
 OUTPUT_FOLDER_vehicle = os.path.join("T_junction_pedestrians/vehicle", "training")
 OUTPUT_FOLDER_sensor1 = os.path.join("T_junction_pedestrians/sensor1", "training")
 OUTPUT_FOLDER_sensor2 = os.path.join("T_junction_pedestrians/sensor2", "training")
-folders = ['calib', 'image_2', 'label_2', 'velodyne', 'planes']
+folders = ['calib', 'image_2', 'label_2', 'velodyne']
 
 OUTPUT_FOLDER_top_camera = os.path.join("T_junction_pedestrians", "top_image")
 
@@ -45,20 +45,20 @@ for folder in folders:
 maybe_create_dir(OUTPUT_FOLDER_top_camera)
 
 """ DATA SAVE PATHS """
-GROUNDPLANE_PATH_vehicle = os.path.join(OUTPUT_FOLDER_vehicle, 'planes/{0:06}.txt')
+#GROUNDPLANE_PATH_vehicle = os.path.join(OUTPUT_FOLDER_vehicle, 'planes/{0:06}.txt')
 LIDAR_PATH_vehicle = os.path.join(OUTPUT_FOLDER_vehicle, 'velodyne/{0:06}.bin')
 LABEL_PATH_vehicle = os.path.join(OUTPUT_FOLDER_vehicle, 'label_2/{0:06}.txt')
 IMAGE_PATH_vehicle = os.path.join(OUTPUT_FOLDER_vehicle, 'image_2/{0:06}.png')
 CALIBRATION_PATH_vehicle = os.path.join(OUTPUT_FOLDER_vehicle, 'calib/{0:06}.txt')
 
-GROUNDPLANE_PATH_sensor1 = os.path.join(OUTPUT_FOLDER_sensor1, 'planes/{0:06}.txt')
+#GROUNDPLANE_PATH_sensor1 = os.path.join(OUTPUT_FOLDER_sensor1, 'planes/{0:06}.txt')
 LIDAR_PATH_sensor1 = os.path.join(OUTPUT_FOLDER_sensor1, 'velodyne/{0:06}.bin')
 LABEL_PATH_sensor1 = os.path.join(OUTPUT_FOLDER_sensor1, 'label_2/{0:06}.txt')
 IMAGE_PATH_sensor1 = os.path.join(OUTPUT_FOLDER_sensor1, 'image_2/{0:06}.png')
 CALIBRATION_PATH_sensor1 = os.path.join(OUTPUT_FOLDER_sensor1, 'calib/{0:06}.txt')
 
 
-GROUNDPLANE_PATH_sensor2 = os.path.join(OUTPUT_FOLDER_sensor2, 'planes/{0:06}.txt')
+#GROUNDPLANE_PATH_sensor2 = os.path.join(OUTPUT_FOLDER_sensor2, 'planes/{0:06}.txt')
 LIDAR_PATH_sensor2 = os.path.join(OUTPUT_FOLDER_sensor2, 'velodyne/{0:06}.bin')
 LABEL_PATH_sensor2 = os.path.join(OUTPUT_FOLDER_sensor2, 'label_2/{0:06}.txt')
 IMAGE_PATH_sensor2 = os.path.join(OUTPUT_FOLDER_sensor2, 'image_2/{0:06}.png')
@@ -176,11 +176,12 @@ class SynchronyModel(object):
     def _span_player(self):
         """create our target vehicle"""
         my_vehicle_bp = random.choice(self.blueprint_library.filter("vehicle"))
-        location_vehicle = carla.Location(174, 60, 0.5)
+        location_vehicle = carla.Location(174, 60, 2)
         rotation_vehicle = carla.Rotation(0, 0, 0)
         transform_vehicle = carla.Transform(location_vehicle, rotation_vehicle)
-        my_vehicle = self.world.spawn_actor(my_vehicle_bp, transform_vehicle)
-        k1, my_camera1 = self._span_sensor(my_vehicle)
+        #my_vehicle = self.world.spawn_actor(my_vehicle_bp, transform_vehicle)
+        #k1, my_camera1 = self._span_sensor(my_vehicle)
+        k1, my_camera1 = self._span_infrastructures_sensor(transform_vehicle)
 
 
         """create our infrastructures"""
@@ -202,10 +203,11 @@ class SynchronyModel(object):
         k_top, top_camera = self._span_top_camera(transform_top_camera)
 
 
-        self.actor_list.append(my_vehicle)
+        #self.actor_list.append(my_vehicle)
 
-        self.player_vehicle = my_vehicle
-
+        #self.player_vehicle = my_vehicle
+        self.player_vehicle = my_camera1
+        
 
         self.player_sensor1 = my_camera2
         self.player_sensor2 = my_camera3
@@ -353,7 +355,7 @@ class SynchronyModel(object):
         n = 0
         for _, transform in enumerate(spawn_points):
             loc = transform.location
-            if (loc.x<150 or loc.y>100 or loc.y<0):
+            if (loc.x<150 or loc.y>130 or loc.y<-130):
                 continue
             if n >= number_of_vehicles:
                 break
@@ -468,14 +470,14 @@ class SynchronyModel(object):
     def _save_training_files(self, datapoints, point_cloud, image, GROUNDPLANE_PATH, LIDAR_PATH, LABEL_PATH, IMAGE_PATH, CALIBRATION_PATH, OUTPUT_FOLDER, player, intrinsic, extrinsic):
         """ Save data in Kitti dataset format """
         logging.info("Attempting to save at frame no {}, frame no: {}".format(self.frame, self.captured_frame_no))
-        groundplane_fname = GROUNDPLANE_PATH.format(self.captured_frame_no)
+        #groundplane_fname = GROUNDPLANE_PATH.format(self.captured_frame_no)
         lidar_fname = LIDAR_PATH.format(self.captured_frame_no)
         kitti_fname = LABEL_PATH.format(self.captured_frame_no)
         img_fname = IMAGE_PATH.format(self.captured_frame_no)
         calib_filename = CALIBRATION_PATH.format(self.captured_frame_no)
 
-        save_groundplanes(
-            groundplane_fname, player, LIDAR_HEIGHT_POS)
+        #save_groundplanes(
+            #groundplane_fname, player, LIDAR_HEIGHT_POS)
         #save_ref_files(OUTPUT_FOLDER, self.captured_frame_no)
         save_image_data(
             img_fname, image)
@@ -508,7 +510,7 @@ class SynchronyModel(object):
         for agent in self.non_player:
             if GEN_DATA:
                 image_vehicle, kitti_datapoint_vehicle = create_kitti_datapoint(
-                    agent, self.intrinsic_vehicle, self.extrinsic_vehicle, image_vehicle, self.depth_image_vehicle, self.player_vehicle, rotRP, draw_3D_bbox=True)
+                    agent, self.intrinsic_vehicle, self.extrinsic_vehicle, image_vehicle, self.depth_image_vehicle, self.player_vehicle, rotRP, draw_3D_bbox=False)
 
                 image_sensor1, kitti_datapoint_sensor1 = create_kitti_datapoint(
                     agent, self.intrinsic_sensor1, self.extrinsic_sensor1, image_sensor1, self.depth_image_sensor1, self.player_sensor1, rotRP, draw_3D_bbox=False)
@@ -597,7 +599,7 @@ def main():
                 
              
                
-                if (datapoints_vehicle or datapoints_sensor1 or datapoints_sensor2) and step % 67 == 0:
+                if (datapoints_vehicle or datapoints_sensor1 or datapoints_sensor2) and step % 71 == 0:
                     points_vehicle = np.copy(np.frombuffer(sync_mode.point_cloud_vehicle.raw_data, dtype=np.dtype('f4')))
                     points_vehicle = np.reshape(points_vehicle, (int(points_vehicle.shape[0] / 4), 4))
                     # Isolate the 3D data
@@ -623,6 +625,7 @@ def main():
                     save_image_data(img_fname, sync_mode.main_image_top_camera)
                     print(sync_mode.captured_frame_no)
                     sync_mode.captured_frame_no += 1
+                    step = 1
                 
                 
                 #image_top = image_converter.to_rgb_array(sync_mode.main_image_top_camera)
