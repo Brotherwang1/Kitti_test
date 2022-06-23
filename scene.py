@@ -16,8 +16,9 @@ import random
 from constants import *
 import queue
 import numpy as np
+from dataexport import *
 
-WINDOW_WIDTH  = 1000
+WINDOW_WIDTH  = 1200
 WINDOW_HEIGHT = 1000
 
 class SynchronyModel(object):
@@ -72,24 +73,65 @@ class SynchronyModel(object):
         return world, init_setting
 
     def _span_player(self):
-        my_vehicle_bp = random.choice(self.blueprint_library.filter('vehicle.bmw.*'))
-        location = carla.Location(198, 10, 0.5)
+        my_vehicle_bp = random.choice(self.blueprint_library.filter('vehicle.bmw*'))
+        location = carla.Location(146, 65, 0.5)
         rotation = carla.Rotation(0, 0, 0)
         transform_vehicle = carla.Transform(location, rotation)
         my_vehicle = self.world.spawn_actor(my_vehicle_bp, transform_vehicle)
         self.actor_list.append(my_vehicle)
         self.player = my_vehicle
 
+        my_vehicle_bp1 = random.choice(self.blueprint_library.filter('vehicle.bmw*'))
+        location = carla.Location(184, 66, 0.5)
+        rotation = carla.Rotation(0, 0, 0)
+        transform_vehicle = carla.Transform(location, rotation)
+        my_vehicle1 = self.world.spawn_actor(my_vehicle_bp1, transform_vehicle)
+        self.actor_list.append(my_vehicle1)
+
+        my_vehicle_bp = random.choice(self.blueprint_library.filter('vehicle.tesla.m*'))
+        location = carla.Location(167.5, 107, 0.5)
+        rotation = carla.Rotation(0, -60, 0)
+        transform_vehicle = carla.Transform(location, rotation)
+        my_vehicle2 = self.world.spawn_actor(my_vehicle_bp, transform_vehicle)
+        self.actor_list.append(my_vehicle2)
+
+        my_vehicle_bp = random.choice(self.blueprint_library.filter('vehicle.tesla.m*'))
+        location = carla.Location(167, 71, 0.5)
+        rotation = carla.Rotation(0, 88, 0)
+        transform_vehicle = carla.Transform(location, rotation)
+        my_vehicle4 = self.world.spawn_actor(my_vehicle_bp, transform_vehicle)
+        self.actor_list.append(my_vehicle4)
+
     def _span_sensor(self):
         camera_bp = self.blueprint_library.find('sensor.camera.rgb')
         camera_bp.set_attribute('image_size_x', str(WINDOW_WIDTH))
         camera_bp.set_attribute('image_size_y', str(WINDOW_HEIGHT))
-        camera_bp.set_attribute('fov', '90')
-        transform_sensor = carla.Transform(carla.Location(x=0, y=0, z=40), carla.Rotation(-90, -90, 0))
+        camera_bp.set_attribute('fov', '95')
+        #transform_sensor = carla.Transform(carla.Location(x=-50, y=20, z=30), carla.Rotation(-90, 0, 0))
+        transform_sensor = carla.Transform(carla.Location(x=170, y=60, z=30), carla.Rotation(-70, 90, 0))
         my_camera = self.world.spawn_actor(camera_bp, transform_sensor)
+
+
+        lidar_bp = self.blueprint_library.find('sensor.lidar.ray_cast')
+        lidar_bp.set_attribute('range', str(lidar_range))
+        lidar_bp.set_attribute('rotation_frequency', str(lidar_rotation_frequency))
+        lidar_bp.set_attribute('upper_fov', str(lidar_upper_fov))
+        lidar_bp.set_attribute('lower_fov', str(lidar_lower_fov))
+        lidar_bp.set_attribute('points_per_second', str(points_per_second))
+        lidar_bp.set_attribute('channels', str(channels))
+
+   
+        #transform_vehicle = carla.Transform(carla.Location(146, 65, 3), carla.Rotation(0, 0, 0))
+        #transform_sensor1 = carla.Transform(carla.Location(x=186, y=69.5, z=2.5), carla.Rotation(0, 0, 0))
+        #transform_sensor2 = carla.Transform(carla.Location(x=157.5, y=107, z=2.5), carla.Rotation(0, 0, 0))
+        transform_sensor3 = carla.Transform(carla.Location(x=155.5, y=53, z=3), carla.Rotation(0, 0, 0))
+        my_lidar = self.world.spawn_actor(lidar_bp, transform_sensor3)
+
         self.actor_list.append(my_camera)
         self.sensors.append(my_camera)
 
+        self.actor_list.append(my_lidar)
+        self.sensors.append(my_lidar)
 
 def draw_image(surface, image, blend=False):
     array = np.frombuffer(image.raw_data, dtype=np.dtype("uint8"))
@@ -132,10 +174,15 @@ def main():
             if should_quit():
                 break
             clock.tick()
-            snapshot, image_rgb = sync_mode.tick(timeout=2.0)
+            snapshot, image_rgb, lidar_data = sync_mode.tick(timeout=2.0)
             fps = round(1.0 / snapshot.timestamp.delta_seconds)
             draw_image(display, image_rgb)
             image_rgb.save_to_disk("secne.png")
+
+            points_vehicle = np.copy(np.frombuffer(lidar_data.raw_data, dtype=np.dtype('f4')))
+            points_vehicle = np.reshape(points_vehicle, (int(points_vehicle.shape[0] / 4), 4))
+            save_lidar_data("1.bin", points_vehicle)
+
             display.blit(
                 font.render('% 5d FPS (real)' % clock.get_fps(), True, (255, 255, 255)),
                 (8, 10))
