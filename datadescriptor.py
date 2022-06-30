@@ -78,8 +78,8 @@ class KittiDescriptor:
       
         self.dimensions = "{} {} {}".format(2*height, 2*width, 2*length)
         if self.dimensions[1] < 0.5:
-            self.dimensions[1] < 0.6
-         if self.dimensions[2] < 0.5:
+            self.dimensions[1] = 0.6
+        if self.dimensions[2] < 0.5:
             self.dimensions[2] = 0.6
 
 
